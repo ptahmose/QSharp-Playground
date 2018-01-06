@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSharpApplication1", "QShar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroverTest", "GroverTest\GroverTest.csproj", "{57A92592-5BD8-4902-B3A4-87EFB812243E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4BitAdderAndShor", "4BitAdderAndShor\4BitAdderAndShor.csproj", "{BEAFC32D-BDE3-4A22-8715-384030BA32D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{57A92592-5BD8-4902-B3A4-87EFB812243E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57A92592-5BD8-4902-B3A4-87EFB812243E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57A92592-5BD8-4902-B3A4-87EFB812243E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEAFC32D-BDE3-4A22-8715-384030BA32D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEAFC32D-BDE3-4A22-8715-384030BA32D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEAFC32D-BDE3-4A22-8715-384030BA32D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEAFC32D-BDE3-4A22-8715-384030BA32D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
