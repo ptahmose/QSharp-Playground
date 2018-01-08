@@ -2,7 +2,7 @@
 using Microsoft.Quantum.Simulation.Simulators;
 using System;
 
-namespace Quantum._4BitAdderAndShor
+namespace Quantum._4BitAdderAndGrover
 {
     class Driver
     {
@@ -10,7 +10,8 @@ namespace Quantum._4BitAdderAndShor
         {
             Test4BitAdderOracle();
             Test4BitAdder();
-            _4BitAdderGroverTest(1000, /*71*/1);
+            TestEntangle4BitAdder(50);
+            _4BitAdderGroverTest(100, /*71*/7);
         }
 
         static int _4BitAdderGroverTest(int repeats, int groverIterations)
@@ -23,7 +24,7 @@ namespace Quantum._4BitAdderAndShor
                 {
                     // Each operation has a static method called Run which takes a simulator as
                     // an argument, along with all the arguments defined by the operation itself.  
-                    var task = Operation.Run(sim, 50, groverIterations);
+                    var task = Operation.Run(sim, 2, groverIterations);
 
                     var result = task.Result;
 
@@ -55,12 +56,27 @@ namespace Quantum._4BitAdderAndShor
             }
         }
 
+        static void TestEntangle4BitAdder(int repeats)
+        {
+            using (var sim = new QuantumSimulator(throwOnReleasingQubitsNotInZeroState: true))
+            {
+                for (int i = 0; i < repeats; ++i)
+                {
+                    var task = Full4BitAdderEntangled.Run(sim);
+
+                    var result = task.Result;
+
+                    Console.WriteLine($"{result.Item1} = {result.Item2} + {result.Item3}");
+                }
+            }
+        }
+
         static void Test4BitAdderOracle()
         {
             using (var sim = new QuantumSimulator())
             {
                 int inputValue = 0b0000_0_0001_0011;
-                var task = Quantum._4BitAdderAndShor.Test4BitAdderOracle.Run(sim, inputValue);
+                var task = Quantum._4BitAdderAndGrover.Test4BitAdderOracle.Run(sim, inputValue);
                 var r = task.Result;
                 Console.WriteLine($"(0) -> {r}");
             }

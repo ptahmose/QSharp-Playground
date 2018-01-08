@@ -1,20 +1,9 @@
-﻿namespace Quantum._4BitAdderAndShor
+﻿namespace Quantum._4BitAdderAndGrover
 {
     open Microsoft.Quantum.Primitive;
     open Microsoft.Quantum.Canon;
 	open Microsoft.Quantum.Extensions.Bitwise ;
 
-	operation Set (desired: Result, q1: Qubit) : ()
-    {
-        body
-        {
-            let current = M(q1);
-            if (desired != current)
-            {
-                X(q1);
-            }
-        }
-    }
 
 	operation AdderCarry(carryIn:Qubit, a:Qubit,b:Qubit,carryOut:Qubit):()
 	{
@@ -46,28 +35,26 @@
 
 
 	/// <summary>	 
-	/// We add two 4-bits number, given by a1,a2,a3,a4 and b1,b2,b3,b4 (where a1/b1 are the least-significant bits).
-	/// On return, the sum is put into b1,b2,b3,b4,carry.
+	/// We add two 4-bits number, given by a1,a2,a3,a4 and b1,b2,b3,b4 (where a1/b1 are the respective least-significant bits).
+	/// On return, the sum is put into b1,b2,b3,b4,carry. carry is assumed to be in state |0> on input.
+	/// See https://arxiv.org/ftp/quant-ph/papers/0206/0206028.pdf.
 	/// </summary>
 	operation FourBitAdder(a1: Qubit,a2: Qubit,a3: Qubit,a4: Qubit,b1: Qubit,b2: Qubit,b3: Qubit,b4: Qubit,carry:Qubit, tempQubits:Qubit[]):()
 	{
 		body
 		{
-			//using (tempQubits=Qubit[4])
-			//{
-				AdderCarry(tempQubits[0],a1,b1,tempQubits[1]);
-				AdderCarry(tempQubits[1],a2,b2,tempQubits[2]);
-				AdderCarry(tempQubits[2],a3,b3,tempQubits[3]);
-				AdderCarry(tempQubits[3],a4,b4,carry);
-				CNOT(a4,b4);
-				Sum(tempQubits[3],a4,b4);
-				(Adjoint AdderCarry)(tempQubits[2],a3,b3,tempQubits[3]);
-				Sum(tempQubits[2],a3,b3);
-				(Adjoint AdderCarry)(tempQubits[1],a2,b2,tempQubits[2]);
-				Sum(tempQubits[1],a2,b2);
-				(Adjoint AdderCarry)(tempQubits[0],a1,b1,tempQubits[1]);
-				Sum(tempQubits[0],a1,b1);
-			//}
+			AdderCarry(tempQubits[0],a1,b1,tempQubits[1]);
+			AdderCarry(tempQubits[1],a2,b2,tempQubits[2]);
+			AdderCarry(tempQubits[2],a3,b3,tempQubits[3]);
+			AdderCarry(tempQubits[3],a4,b4,carry);
+			CNOT(a4,b4);
+			Sum(tempQubits[3],a4,b4);
+			(Adjoint AdderCarry)(tempQubits[2],a3,b3,tempQubits[3]);
+			Sum(tempQubits[2],a3,b3);
+			(Adjoint AdderCarry)(tempQubits[1],a2,b2,tempQubits[2]);
+			Sum(tempQubits[1],a2,b2);
+			(Adjoint AdderCarry)(tempQubits[0],a1,b1,tempQubits[1]);
+			Sum(tempQubits[0],a1,b1);
 		}
 
 		adjoint auto
@@ -88,9 +75,15 @@
 			FourBitAdder(startQubits[0],startQubits[1],startQubits[2],startQubits[3],
 						 startQubits[4],startQubits[5],startQubits[6],startQubits[7],startQubits[8],tmpQubits);
 
-			// result is in [8] -> [4]  (where [4] is the LSB)
+			// result is in [4] -> [8]  (where [4] is the LSB)
 			// look for [4]=0, [5]=1, [6]=0, [7]=0, [8]=0
-			X(startQubits[4]);X(startQubits[6]);X(startQubits[7]);X(startQubits[8]);
+			if (And(expectedSum,1)==0)	{X(startQubits[4]);}
+			if (And(expectedSum,2)==0)	{X(startQubits[5]);}
+			if (And(expectedSum,4)==0)	{X(startQubits[6]);}
+			if (And(expectedSum,8)==0)	{X(startQubits[7]);}
+			if (And(expectedSum,16)==0)	{X(startQubits[8]);}
+			
+			//X(startQubits[4]);X(startQubits[6]);X(startQubits[7]);X(startQubits[8]);
 			//X(startQubits[tmpQubitIndices[0]]);X(startQubits[tmpQubitIndices[1]]);X(startQubits[tmpQubitIndices[2]]);X(startQubits[tmpQubitIndices[3]]);
 			//MultiControlledXClean(
 			//	[dataRegister[4];dataRegister[5];dataRegister[6];dataRegister[7];dataRegister[8];
@@ -100,7 +93,13 @@
 				[startQubits[4];startQubits[5];startQubits[6];startQubits[7];startQubits[8]],
 				flagQubit);
 			
-			X(startQubits[4]);X(startQubits[6]);X(startQubits[7]);X(startQubits[8]);
+			if (And(expectedSum,1)==0)	{X(startQubits[4]);}
+			if (And(expectedSum,2)==0)	{X(startQubits[5]);}
+			if (And(expectedSum,4)==0)	{X(startQubits[6]);}
+			if (And(expectedSum,8)==0)	{X(startQubits[7]);}
+			if (And(expectedSum,16)==0)	{X(startQubits[8]);}
+			
+			//X(startQubits[4]);X(startQubits[6]);X(startQubits[7]);X(startQubits[8]);
 			//X(startQubits[tmpQubitIndices[0]]);X(startQubits[tmpQubitIndices[1]]);X(startQubits[tmpQubitIndices[2]]);X(startQubits[tmpQubitIndices[3]]);
 			(Adjoint FourBitAdder)(startQubits[0],startQubits[1],startQubits[2],startQubits[3],
 						 startQubits[4],startQubits[5],startQubits[6],startQubits[7],startQubits[8],tmpQubits);
@@ -154,6 +153,11 @@
         }
     }
 
+    /// <summary>
+    /// The argument a and b are used as the inputs for the 4-bit adder. Only the lowest 4 bits of the respective argument
+    /// are used. We prepare the qubits in a pure state with those bits, and calculate the 5-bit sum. The sum is 
+    /// then returned.
+    /// </summary>
 	operation Full4BitAdder(a:Int,b:Int):(Int)
 	{
 		body
@@ -162,48 +166,65 @@
 			using (qubits = Qubit[9+4])
 			{
 				let tempQubits=[qubits[9];qubits[10];qubits[11];qubits[12]];
-				SetFromInteger(And(a,1), qubits[0]);
-				SetFromInteger(And(a,2), qubits[1]);
-				SetFromInteger(And(a,4), qubits[2]);
-				SetFromInteger(And(a,8), qubits[3]);
-				SetFromInteger(And(b,1), qubits[4]);
-				SetFromInteger(And(b,2), qubits[5]);
-				SetFromInteger(And(b,4), qubits[6]);
-				SetFromInteger(And(b,8), qubits[7]);
+				
+				SetFromIntegerBits(a, [0;1;2;3], qubits);
+				SetFromIntegerBits(b, [4;5;6;7], qubits);
+				
 				FourBitAdder(qubits[0],qubits[1],qubits[2],qubits[3],
 								qubits[4],qubits[5],qubits[6],qubits[7],
 								qubits[8],
 								tempQubits);
-				let s0=M(qubits[4]);
-				let s1=M(qubits[5]);
-				let s2=M(qubits[6]);
-				let s3=M(qubits[7]);
-				let s4=M(qubits[8]);
-				if (s0==One)
-				{
-					set result=Or(result,1);
-				}
-				if (s1==One)
-				{
-					set result=Or(result,2);
-				}
-				if (s2==One)
-				{
-					set result=Or(result,4);
-				}
-				if (s3==One)
-				{
-					set result=Or(result,8);
-				}
-				if (s4==One)
-				{
-					set result=Or(result,16);
-				}
+								
+                set result = PositiveIntFromResultArr(MultiM([qubits[4];qubits[5];qubits[6];qubits[7]]));									
 
 				ResetAll(qubits);
 			}
 
 			return (result);
+		}
+	}
+
+	/// <summary>
+	/// We use the 4-Bit-Adder and use entangled qubits as input. We then make a measurement, and reconstruct one of the
+	/// summands manually.
+	/// The tuple returned contains: the sum, summand #1 and (the reconstructed) summand #2.
+	/// </summary>
+	operation Full4BitAdderEntangled():(Int, Int, Int)
+	{
+		body
+		{
+			mutable sum=0;
+			mutable summand1=0;
+			mutable summand2=0;
+			using (qubits = Qubit[9+4])
+			{
+				let tempQubits=[qubits[9];qubits[10];qubits[11];qubits[12]];
+
+				H(qubits[0]);H(qubits[1]);H(qubits[2]);H(qubits[3]);
+				H(qubits[4]);H(qubits[5]);H(qubits[6]);H(qubits[7]);
+				
+				FourBitAdder(qubits[0],qubits[1],qubits[2],qubits[3],
+								qubits[4],qubits[5],qubits[6],qubits[7],
+								qubits[8],
+								tempQubits);
+
+				set sum = PositiveIntFromResultArr(MultiM([qubits[4];qubits[5];qubits[6];qubits[7];qubits[8]]));
+				set summand1 = PositiveIntFromResultArr(MultiM([qubits[0];qubits[1];qubits[2];qubits[3]]));
+				
+				// The second summand was overwritten with the result. We can recover it by running the adjoint operation
+				//  on the result. Note that the qubits are all in pure states since we just have measured them, so this 
+				//  essentially is a classic operation (or: should not be done on qubits but one cbits).
+				(Adjoint FourBitAdder)(qubits[0],qubits[1],qubits[2],qubits[3],
+										qubits[4],qubits[5],qubits[6],qubits[7],
+										qubits[8],
+										tempQubits);
+										
+                set summand2 = PositiveIntFromResultArr(MultiM([qubits[4];qubits[5];qubits[6];qubits[7]]));															
+
+				ResetAll(qubits);
+			}
+
+			return (sum,summand1,summand2);
 		}
 	}
 
@@ -263,26 +284,45 @@
         }
         controlled adjoint auto
     }
+	
+	operation SetFromIntegerBits(v: Int, indices: Int[],qubits:Qubit[]):()
+	{
+		body
+		{
+			mutable mask=1;
+			for (i in 0..(Length(indices) - 1))
+			{
+				SetFromInteger(And(v,mask), qubits[indices[i]]);
+				set mask=2*mask;
+			}
+		}
+	}
 
-	operation SetFromInteger(desired: Int, q1: Qubit) : ()
+	/// <summary> Set the qubit to |0> if value==0, and to |1> otherwise.</summary>
+	operation SetFromInteger(value: Int, q: Qubit) : ()
     {
         body
         {
-            let current = M(q1);
-			if (desired!=0)
+			if (value!=0)
 			{
-				if (current!=One)
-				{
-					X(q1);
-				}
+				Set(One,q);
 			}
 			else
 			{
-				if (current!=Zero)
-				{
-					X(q1);
-				}
+				Set(Zero,q);
 			}
+        }
+    }
+
+	operation Set(desired: Result, q: Qubit) : ()
+    {
+        body
+        {
+            let current = M(q);
+            if (desired != current)
+            {
+                X(q);
+            }
         }
     }
 }
