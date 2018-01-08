@@ -62,47 +62,49 @@
         adjoint controlled auto
 	}
 	
-	operation FourBitAdderOracle(expectedSum : Int, idxMarkedQubit: Int, startQubits: Qubit[], tmpQubitIndices:Int[]):()
+	operation FourBitAdderOracle(expectedSum : Int, idxMarkedQubit: Int, qubits: Qubit[], tmpQubitIndices:Int[]):()
 	{
 		body
 		{
-			let flagQubit = startQubits[idxMarkedQubit];
-            //let dataRegister = Exclude([idxMarkedQubit], startQubits);
-			let dataRegister = Exclude([idxMarkedQubit;tmpQubitIndices[0];tmpQubitIndices[1];tmpQubitIndices[2];tmpQubitIndices[3];8], startQubits);
+		    // That's the "result"-qubit, the one we have to set if our function argument is a "good one". We determine
+		    // if it is a "good one" by calculate the function, and then compare the result with "expectedSum".
+		    // Note that we have to undo all operations, so that the state is not modified (with the exception of the flagQubit,
+		    // of course) by the oracle.
+			let flagQubit = qubits[idxMarkedQubit];
+			
+			// "dataRegister" contains the qubits we care about, or those are the input-qubits for the oracle. Note that
+			//  we also exclude the "carry"-qubit (the 5th qubit of the result) because it is not used as a input, it must
+			//  be |0>.
+			let dataRegister = Exclude([idxMarkedQubit;tmpQubitIndices[0];tmpQubitIndices[1];tmpQubitIndices[2];tmpQubitIndices[3];8], qubits);
+			
 			ApplyToEachCA(H, dataRegister);
-			let tmpQubits=[startQubits[tmpQubitIndices[0]];startQubits[tmpQubitIndices[1]];startQubits[tmpQubitIndices[2]];startQubits[tmpQubitIndices[3]]];
+			let tmpQubits=[qubits[tmpQubitIndices[0]];qubits[tmpQubitIndices[1]];qubits[tmpQubitIndices[2]];qubits[tmpQubitIndices[3]]];
 
-			FourBitAdder(startQubits[0],startQubits[1],startQubits[2],startQubits[3],
-						 startQubits[4],startQubits[5],startQubits[6],startQubits[7],startQubits[8],tmpQubits);
+			FourBitAdder(qubits[0],qubits[1],qubits[2],qubits[3],
+						 qubits[4],qubits[5],qubits[6],qubits[7],qubits[8],tmpQubits);
 
 			// result is in [4] -> [8]  (where [4] is the LSB)
-			// look for [4]=0, [5]=1, [6]=0, [7]=0, [8]=0
-			if (And(expectedSum,1)==0)	{X(startQubits[4]);}
-			if (And(expectedSum,2)==0)	{X(startQubits[5]);}
-			if (And(expectedSum,4)==0)	{X(startQubits[6]);}
-			if (And(expectedSum,8)==0)	{X(startQubits[7]);}
-			if (And(expectedSum,16)==0)	{X(startQubits[8]);}
+			// If we expect a zero, then we need to invert the qubit (and undo the inversion afterwards)
+			if (And(expectedSum,1)==0)	{X(qubits[4]);}
+			if (And(expectedSum,2)==0)	{X(qubits[5]);}
+			if (And(expectedSum,4)==0)	{X(qubits[6]);}
+			if (And(expectedSum,8)==0)	{X(qubits[7]);}
+			if (And(expectedSum,16)==0)	{X(qubits[8]);}
 			
-			//X(startQubits[4]);X(startQubits[6]);X(startQubits[7]);X(startQubits[8]);
-			//X(startQubits[tmpQubitIndices[0]]);X(startQubits[tmpQubitIndices[1]]);X(startQubits[tmpQubitIndices[2]]);X(startQubits[tmpQubitIndices[3]]);
-			//MultiControlledXClean(
-			//	[dataRegister[4];dataRegister[5];dataRegister[6];dataRegister[7];dataRegister[8];
-			//	startQubits[tmpQubitIndices[0]];startQubits[tmpQubitIndices[1]];startQubits[tmpQubitIndices[2]];startQubits[tmpQubitIndices[3]]],
-			//	flagQubit);
+			// we "and" the result-qubits (which have been inverted in case we expect a zero), so the flag-qubit
+			//  is only set if the result is the same as "expectedSum"
 			MultiControlledXClean(
-				[startQubits[4];startQubits[5];startQubits[6];startQubits[7];startQubits[8]],
+				[qubits[4];qubits[5];qubits[6];qubits[7];qubits[8]],
 				flagQubit);
 			
-			if (And(expectedSum,1)==0)	{X(startQubits[4]);}
-			if (And(expectedSum,2)==0)	{X(startQubits[5]);}
-			if (And(expectedSum,4)==0)	{X(startQubits[6]);}
-			if (And(expectedSum,8)==0)	{X(startQubits[7]);}
-			if (And(expectedSum,16)==0)	{X(startQubits[8]);}
+			if (And(expectedSum,1)==0)	{X(qubits[4]);}
+			if (And(expectedSum,2)==0)	{X(qubits[5]);}
+			if (And(expectedSum,4)==0)	{X(qubits[6]);}
+			if (And(expectedSum,8)==0)	{X(qubits[7]);}
+			if (And(expectedSum,16)==0)	{X(qubits[8]);}
 			
-			//X(startQubits[4]);X(startQubits[6]);X(startQubits[7]);X(startQubits[8]);
-			//X(startQubits[tmpQubitIndices[0]]);X(startQubits[tmpQubitIndices[1]]);X(startQubits[tmpQubitIndices[2]]);X(startQubits[tmpQubitIndices[3]]);
-			(Adjoint FourBitAdder)(startQubits[0],startQubits[1],startQubits[2],startQubits[3],
-						 startQubits[4],startQubits[5],startQubits[6],startQubits[7],startQubits[8],tmpQubits);
+			(Adjoint FourBitAdder)(qubits[0],qubits[1],qubits[2],qubits[3],
+						            qubits[4],qubits[5],qubits[6],qubits[7],qubits[8],tmpQubits);
 		}
 
 		adjoint auto
@@ -129,11 +131,12 @@
             mutable resultSuccess = Zero;
             mutable resultValue = 0;
 
-             // Allocate 10 qubits. These are all in the |0〉
-            // state.
+             // Allocate 14 qubits. These are all in the |0〉 state.
+             // We have 9 qubits for the 4-bit-adder, one flag-qubit for the Grover-amplitude-amplification (used by the
+             // oracle-function) and additional 4 ancillary qubits (required by the 4-bit-adder).
             using (qubits = Qubit[10+4]) 
 			{
-				(GroverSearch( expectedSum, nIterations, 9,[10;11;12;13]))(qubits);
+				(GroverSearch( expectedSum, nIterations, 9, [10;11;12;13]))(qubits);
 
 				 // Measure the marked qubit. On success, this should be One.
                 set resultSuccess = M(qubits[9]);
@@ -143,7 +146,7 @@
                 let resultElement = MultiM(qubits);
 				set resultValue = PositiveIntFromResultArr(resultElement);
 
-				    // These reset all qubits to the |0〉 state, which is required 
+				// This resets all qubits to the |0〉 state, which is required 
                 // before deallocation.
                 ResetAll(qubits);
 			}
