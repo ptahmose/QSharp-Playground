@@ -1,17 +1,32 @@
 ﻿using Microsoft.Quantum.Simulation.Core;
 using Microsoft.Quantum.Simulation.Simulators;
 using System;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace Quantum._4BitAdderAndGrover
 {
     class Driver
     {
+        private static CmdLineArguments cmdLineArguments;
+
         static void Main(string[] args)
         {
-            Test4BitAdderOracle();
-            Test4BitAdder();
-            TestEntangle4BitAdder(50);
-            _4BitAdderGroverTest(100, /*71*/7);
+            cmdLineArguments = new CmdLineArguments(args);
+            switch (cmdLineArguments.Operation)
+            {
+                case CmdLineArguments.OperationToExecute.TestAdderInPureState:
+                    Test4BitAdderPureState(PhysicalConsole.Singleton);
+                    break;
+                case CmdLineArguments.OperationToExecute.TestAdderWithEntangledInput:
+                    TestEntangle4BitAdder(PhysicalConsole.Singleton, cmdLineArguments.Repeats);
+                    break;
+            }
+
+
+            //Test4BitAdderOracle();
+            //Test4BitAdderPureState();
+            //TestEntangle4BitAdder(50);
+            //_4BitAdderGroverTest(100, /*71*/7);
         }
 
         static int _4BitAdderGroverTest(int repeats, int groverIterations)
@@ -41,8 +56,11 @@ namespace Quantum._4BitAdderAndGrover
             return successfulCount;
         }
 
-        static void Test4BitAdder()
+        static void Test4BitAdderPureState(IConsole console)
         {
+            console.WriteLine("Testing the 4-bit adder with all possible inputs");
+            console.WriteLine(string.Empty);
+            int errorsEncountered = 0;
             using (var sim = new QuantumSimulator())
             {
                 for (int a = 0; a < 16; ++a)
@@ -50,14 +68,42 @@ namespace Quantum._4BitAdderAndGrover
                     for (int b = 0; b < 16; ++b)
                     {
                         var res = Full4BitAdder.Run(sim, a, b).Result;
-                        Console.WriteLine($"{a}+{b} = {res}");
+                        console.Write($"{a}+{b} = {res}");
+                        if (a + b != res)
+                        {
+                            var prevColor = console.ForegroundColor;
+                            console.ForegroundColor = ConsoleColor.Red;
+                            console.Write(" WRONG");
+                            console.ForegroundColor = prevColor;
+                            errorsEncountered++;
+                        }
+
+                        console.WriteLine(string.Empty);
                     }
                 }
             }
+
+            if (errorsEncountered > 0)
+            {
+                var prevColor = console.ForegroundColor;
+                console.ForegroundColor = ConsoleColor.Red;
+                console.WriteLine($"*** {errorsEncountered} error(s) occurred. ***");
+                console.ForegroundColor = prevColor;
+            }
+            else
+            {
+                var prevColor = console.ForegroundColor;
+                console.ForegroundColor = ConsoleColor.Green;
+                console.WriteLine($"*** Everything OK. ***");
+                console.ForegroundColor = prevColor;
+            }
         }
 
-        static void TestEntangle4BitAdder(int repeats)
+        static void TestEntangle4BitAdder(IConsole console,int repeats)
         {
+            console.WriteLine("Executing the 4-bit adder with entangled inputs");
+            console.WriteLine(string.Empty);
+            int errorsEncountered = 0;
             using (var sim = new QuantumSimulator(throwOnReleasingQubitsNotInZeroState: true))
             {
                 for (int i = 0; i < repeats; ++i)
@@ -66,8 +112,33 @@ namespace Quantum._4BitAdderAndGrover
 
                     var result = task.Result;
 
-                    Console.WriteLine($"{result.Item1} = {result.Item2} + {result.Item3}");
+                    console.Write($"{result.Item1} = {result.Item2} + {result.Item3}");
+                    if (result.Item2 + result.Item3 != result.Item1)
+                    {
+                        var prevColor = console.ForegroundColor;
+                        console.ForegroundColor = ConsoleColor.Red;
+                        console.Write(" WRONG");
+                        console.ForegroundColor = prevColor;
+                        errorsEncountered++;
+                    }
+
+                    console.WriteLine(string.Empty);
                 }
+            }
+
+            if (errorsEncountered > 0)
+            {
+                var prevColor = console.ForegroundColor;
+                console.ForegroundColor = ConsoleColor.Red;
+                console.WriteLine($"*** {errorsEncountered} error(s) occurred. ***");
+                console.ForegroundColor = prevColor;
+            }
+            else
+            {
+                var prevColor = console.ForegroundColor;
+                console.ForegroundColor = ConsoleColor.Green;
+                console.WriteLine($"*** Everything OK. ***");
+                console.ForegroundColor = prevColor;
             }
         }
 

@@ -118,7 +118,7 @@
     }
 
 
-	 function GroverSearch( expectedSum : Int, nIterations: Int, idxMarkedQubit: Int,tmpQuBitIndices:Int[]) : (Qubit[] => () : Adjoint, Controlled)
+	function GroverSearch( expectedSum : Int, nIterations: Int, idxMarkedQubit: Int,tmpQuBitIndices:Int[]) : (Qubit[] => () : Adjoint, Controlled)
     {
         return AmpAmpByOracle(nIterations, GroverStatePrepOracle(expectedSum,tmpQuBitIndices), idxMarkedQubit);
     }
@@ -178,7 +178,7 @@
 								qubits[8],
 								tempQubits);
 								
-                set result = PositiveIntFromResultArr(MultiM([qubits[4];qubits[5];qubits[6];qubits[7]]));									
+                set result = PositiveIntFromResultArr(MultiM([qubits[4];qubits[5];qubits[6];qubits[7];qubits[8]]));									
 
 				ResetAll(qubits);
 			}

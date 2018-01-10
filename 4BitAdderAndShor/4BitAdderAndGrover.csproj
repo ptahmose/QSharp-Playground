@@ -14,6 +14,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Prefer32Bit>false</Prefer32Bit>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +27,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -48,6 +48,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="McMaster.Extensions.CommandLineUtils, Version=2.1.1.0, Culture=neutral, PublicKeyToken=6f71cb76b82f055d">
+      <HintPath>..\packages\McMaster.Extensions.CommandLineUtils.2.1.1\lib\net45\McMaster.Extensions.CommandLineUtils.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Quantum.Canon">
       <HintPath>..\packages\Microsoft.Quantum.Canon.0.1.1712.901-preview\lib\net461\Microsoft.Quantum.Canon.dll</HintPath>
     </Reference>
@@ -70,6 +73,7 @@
       <HintPath>..\packages\Microsoft.Quantum.Development.Kit.0.1.1712.901-preview\lib\net461\Microsoft.Quantum.Simulation.Simulators.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -81,6 +85,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CmdLineArguments.cs" />
     <Compile Include="Driver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -88,7 +93,9 @@
     <QsharpCompile Include="Operation.qs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
