@@ -16,7 +16,8 @@ namespace Quantum._4BitAdderAndGrover
             Invalid,
             TestAdderInPureState,
             TestAdderOracle,
-            TestAdderWithEntangledInput
+            TestAdderWithEntangledInput,
+            FindSummands
         }
     }
 
@@ -53,17 +54,21 @@ namespace Quantum._4BitAdderAndGrover
 
                     if (operationOption.HasValue())
                     {
-                        if (string.CompareOrdinal("TestAdderInPureState", operationOption.Value()) == 0)
+                        if (string.Compare("TestAdderInPureState", operationOption.Value(),StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.Operation = OperationToExecute.TestAdderInPureState;
                         }
-                        else if (string.CompareOrdinal("TestAdderOracle", operationOption.Value()) == 0)
+                        else if (string.Compare("TestAdderOracle", operationOption.Value(),StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.Operation = OperationToExecute.TestAdderOracle;
                         }
-                        else if (string.CompareOrdinal("TestAdderWithEntangledInput", operationOption.Value()) == 0)
+                        else if (string.Compare("TestAdderWithEntangledInput", operationOption.Value(),StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.Operation = OperationToExecute.TestAdderWithEntangledInput;
+                        }
+                        else if (string.Compare("FindSummands", operationOption.Value(),StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            this.Operation = OperationToExecute.FindSummands;                            
                         }
                     }
                 });

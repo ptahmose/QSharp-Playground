@@ -20,6 +20,9 @@ namespace Quantum._4BitAdderAndGrover
                 case CmdLineArguments.OperationToExecute.TestAdderWithEntangledInput:
                     TestEntangle4BitAdder(PhysicalConsole.Singleton, cmdLineArguments.Repeats);
                     break;
+                case CmdLineArguments.OperationToExecute.FindSummands:
+                    _4BitAdderGroverTest(PhysicalConsole.Singleton, cmdLineArguments.Repeats, 7);
+                    break;
             }
 
 
@@ -29,7 +32,7 @@ namespace Quantum._4BitAdderAndGrover
             //_4BitAdderGroverTest(100, /*71*/7);
         }
 
-        static int _4BitAdderGroverTest(int repeats, int groverIterations)
+        static int _4BitAdderGroverTest(IConsole console, int repeats, int groverIterations)
         {
             int successfulCount = 0;
 
@@ -99,7 +102,7 @@ namespace Quantum._4BitAdderAndGrover
             }
         }
 
-        static void TestEntangle4BitAdder(IConsole console,int repeats)
+        static void TestEntangle4BitAdder(IConsole console, int repeats)
         {
             console.WriteLine("Executing the 4-bit adder with entangled inputs");
             console.WriteLine(string.Empty);
