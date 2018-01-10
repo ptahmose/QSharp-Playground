@@ -1,10 +1,13 @@
-﻿using Microsoft.Quantum.Simulation.Core;
-using Microsoft.Quantum.Simulation.Simulators;
-using System;
-using McMaster.Extensions.CommandLineUtils;
-
-namespace Quantum._4BitAdderAndGrover
+﻿namespace Quantum._4BitAdderAndGrover
 {
+    #region using directives
+    using Microsoft.Quantum.Simulation.Core;
+    using Microsoft.Quantum.Simulation.Simulators;
+    using System;
+    using McMaster.Extensions.CommandLineUtils;
+    using Microsoft.Quantum.Simulation.Simulators.QCTraceSimulators.Circuits;
+    #endregion
+
     class Driver
     {
         private static CmdLineArguments cmdLineArguments;
@@ -21,7 +24,7 @@ namespace Quantum._4BitAdderAndGrover
                     TestEntangle4BitAdder(PhysicalConsole.Singleton, cmdLineArguments.Repeats);
                     break;
                 case CmdLineArguments.OperationToExecute.FindSummands:
-                    _4BitAdderGroverTest(PhysicalConsole.Singleton, cmdLineArguments.Repeats, 7);
+                    _4BitAdderGroverTest(PhysicalConsole.Singleton, cmdLineArguments);
                     break;
             }
 
@@ -32,30 +35,45 @@ namespace Quantum._4BitAdderAndGrover
             //_4BitAdderGroverTest(100, /*71*/7);
         }
 
-        static int _4BitAdderGroverTest(IConsole console, int repeats, int groverIterations)
+        static int _4BitAdderGroverTest(IConsole console, CmdLineArguments arguments)//int repeats, int groverIterations)
         {
+            console.WriteLine($"Finding the the summands which gives the specified sum ({cmdLineArguments.ExpectedResult}), using {cmdLineArguments.GroverIterations} Grover-iterations.");
+            console.WriteLine(string.Empty);
+            
             int successfulCount = 0;
 
             using (var sim = new QuantumSimulator(throwOnReleasingQubitsNotInZeroState: true))
             {
-                for (int i = 0; i < repeats; ++i)
+                for (int i = 0; i < cmdLineArguments.Repeats; ++i)
                 {
                     // Each operation has a static method called Run which takes a simulator as
                     // an argument, along with all the arguments defined by the operation itself.  
-                    var task = Operation.Run(sim, 2, groverIterations);
-
-                    var result = task.Result;
+                    var result = Operation.Run(sim, cmdLineArguments.ExpectedResult, cmdLineArguments.GroverIterations).Result;
 
                     if (result.Item1 == Result.One)
                     {
                         successfulCount++;
-                        Console.WriteLine(result.Item2);
+                        string resultAsBinary = Convert.ToString(result.Item2, 2).PadLeft(14, '0').Insert(4, "'").Insert(6, "'").Insert(8, "'").Insert(13, "'");;
+                        int a = ((int)result.Item2) & 0xf;
+                        int b = (((int)result.Item2)>>4)&0xf;
+                        var prevColor = console.ForegroundColor;
+                        console.ForegroundColor = ConsoleColor.Green;
+                        console.Out.WriteLine($"{i + 1}: a={a} b={b}  ; {result.Item2} {resultAsBinary}");
+                        console.Out.WriteLine(result.Item2);
+                        console.ForegroundColor = prevColor;
+                    }
+                    else
+                    {
+                        var prevColor = console.ForegroundColor;
+                        console.ForegroundColor = ConsoleColor.Red;
+                        console.Out.WriteLine($"{i + 1}: not successful");
+                        console.ForegroundColor = prevColor;
                     }
                 }
             }
 
-            Console.WriteLine(
-                $"Grover-Iterations {groverIterations}: {successfulCount} of {repeats} had the desired result.");
+            console.Out.WriteLine(
+                $"Grover-Iterations {cmdLineArguments.GroverIterations}: {successfulCount} of {arguments.Repeats} had the desired result.");
             return successfulCount;
         }
 
