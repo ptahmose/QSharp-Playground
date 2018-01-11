@@ -59,7 +59,6 @@
                         var prevColor = console.ForegroundColor;
                         console.ForegroundColor = ConsoleColor.Green;
                         console.Out.WriteLine($"{i + 1}: a={a} b={b}  ; {result.Item2} {resultAsBinary}");
-                        console.Out.WriteLine(result.Item2);
                         console.ForegroundColor = prevColor;
                     }
                     else
