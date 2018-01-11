@@ -44,17 +44,17 @@ namespace Quantum._4BitAdderAndGrover
             this.cmdLineApp.Description = "A Q#-learning-project, playing with a quantum-4-bit-adder";
             this.cmdLineApp.HelpOption("-?|-h|--help");
 
-            var operationOption = this.cmdLineApp.Option("-o|--operation<value>",
+            var operationOption = this.cmdLineApp.Option("-o|--operation <value>",
                 "The operation to execute (one of TestAdderInPureState, TestAdderOracle, TestAdderWithEntangledInput, FindSummands)",
                 CommandOptionType.SingleValue);
             
-            var repeatsOption = this.cmdLineApp.Option("-r| --repeats<value>", "How many times to repeat the operation", CommandOptionType.SingleValue);
+            var repeatsOption = this.cmdLineApp.Option("-r| --repeats <value>", "How many times to repeat the operation", CommandOptionType.SingleValue);
             repeatsOption.Validators.Add(new MustBePositiveInteger());
             
-            var groverIterationsOption = this.cmdLineApp.Option("-g| --groveriterations<value>", "How many Grover-iterations to perform (in case of 'FindSummands'-operation)", CommandOptionType.SingleValue);
+            var groverIterationsOption = this.cmdLineApp.Option("-g| --groveriterations <value>", "How many Grover-iterations to perform (in case of 'FindSummands'-operation)", CommandOptionType.SingleValue);
             repeatsOption.Validators.Add(new MustBePositiveInteger());
             
-            var expectedResultOption = this.cmdLineApp.Option("-e| --expectedresult<value>", "The result for find the summands for (in case of 'FindSummands'-operation)", CommandOptionType.SingleValue);
+            var expectedResultOption = this.cmdLineApp.Option("-e| --expectedresult <value>", "The result for find the summands for (in case of 'FindSummands'-operation)", CommandOptionType.SingleValue);
             repeatsOption.Validators.Add(new MustBeNonNegativeInteger());
 
             this.cmdLineApp.OnExecute(
