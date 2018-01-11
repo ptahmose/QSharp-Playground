@@ -45,7 +45,7 @@ namespace Quantum._4BitAdderAndGrover
             this.cmdLineApp.HelpOption("-?|-h|--help");
 
             var operationOption = this.cmdLineApp.Option("-o|--operation<value>",
-                "The operation to execute",
+                "The operation to execute (one of TestAdderInPureState, TestAdderOracle, TestAdderWithEntangledInput, FindSummands)",
                 CommandOptionType.SingleValue);
             
             var repeatsOption = this.cmdLineApp.Option("-r| --repeats<value>", "How many times to repeat the operation", CommandOptionType.SingleValue);
