@@ -62,7 +62,7 @@
         adjoint controlled auto
 	}
 	
-	operation FourBitAdderOracle(expectedSum : Int, idxMarkedQubit: Int, qubits: Qubit[], tmpQubitIndices:Int[]):()
+	operation FourBitAdderOracle(execHadamard:Bool,expectedSum : Int, idxMarkedQubit: Int, qubits: Qubit[], tmpQubitIndices:Int[]):()
 	{
 		body
 		{
@@ -77,7 +77,11 @@
 			//  be |0>.
 			let dataRegister = Exclude([idxMarkedQubit;tmpQubitIndices[0];tmpQubitIndices[1];tmpQubitIndices[2];tmpQubitIndices[3];8], qubits);
 			
-			ApplyToEachCA(H, dataRegister);
+			if (execHadamard)
+			{
+				ApplyToEachCA(H, dataRegister);
+			}
+
 			let tmpQubits=[qubits[tmpQubitIndices[0]];qubits[tmpQubitIndices[1]];qubits[tmpQubitIndices[2]];qubits[tmpQubitIndices[3]]];
 
 			FourBitAdder(qubits[0],qubits[1],qubits[2],qubits[3],
@@ -114,7 +118,7 @@
 
 	function GroverStatePrepOracle(expectedSum : Int,tmpQuBitIndices:Int[]) : StateOracle
     {
-        return StateOracle(FourBitAdderOracle(expectedSum, _, _, tmpQuBitIndices));
+        return StateOracle(FourBitAdderOracle(true,expectedSum, _, _, tmpQuBitIndices));
     }
 
 
@@ -231,27 +235,19 @@
 		}
 	}
 
-	operation Test4BitAdderOracle(a:Int):(Int)
+	operation Test4BitAdderOracle(a:Int,b:Int,expectedSum:Int):(Int)
 	{
 		body
 		{
 			mutable result=0;
 			mutable v=1;
-			using (qubits = Qubit[13]) 
+			// qubit 9 is marker bit, qbuit 10-13 are ancillary quits, qubit 8 is carry bit which must be zero on input
+			using (qubits = Qubit[14]) 
 			{
-				for (i in 0..(Length(qubits) - 1))
-				{
-					SetFromInteger(And(a,v), qubits[i]);
-					set v=v+v;
-				}
+				SetFromIntegerBits(a, [0;1;2;3], qubits);
+				SetFromIntegerBits(b, [4;5;6;7], qubits);
 
-				//let tempQubits=[qubits[9];qubits[10];qubits[11];qubits[12]];
-				let tempQubits=[qubits[12];qubits[11];qubits[10];qubits[9]];
-
-				FourBitAdder(qubits[0],qubits[1],qubits[2],qubits[3],
-								qubits[4],qubits[5],qubits[6],qubits[7],
-								qubits[8],
-								tempQubits);
+				FourBitAdderOracle(false,expectedSum,9,qubits,[10;11;12;13]);
 
 				set result= PositiveIntFromResultArr(MultiM(qubits));
 

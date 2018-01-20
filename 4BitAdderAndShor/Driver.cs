@@ -26,20 +26,17 @@
                 case CmdLineArguments.OperationToExecute.FindSummands:
                     _4BitAdderGroverTest(PhysicalConsole.Singleton, cmdLineArguments);
                     break;
+                case CmdLineArguments.OperationToExecute.TestAdderOracle:
+                    Test4BitAdderOracle(PhysicalConsole.Singleton, cmdLineArguments.SummandA, cmdLineArguments.SummandB, cmdLineArguments.ExpectedResult);
+                    break;
             }
-
-
-            //Test4BitAdderOracle();
-            //Test4BitAdderPureState();
-            //TestEntangle4BitAdder(50);
-            //_4BitAdderGroverTest(100, /*71*/7);
         }
 
-        static int _4BitAdderGroverTest(IConsole console, CmdLineArguments arguments)//int repeats, int groverIterations)
+        static int _4BitAdderGroverTest(IConsole console, CmdLineArguments arguments)
         {
             console.WriteLine($"Finding the the summands which gives the specified sum ({cmdLineArguments.ExpectedResult}), using {cmdLineArguments.GroverIterations} Grover-iterations.");
             console.WriteLine(string.Empty);
-            
+
             int successfulCount = 0;
 
             using (var sim = new QuantumSimulator(throwOnReleasingQubitsNotInZeroState: true))
@@ -53,9 +50,9 @@
                     if (result.Item1 == Result.One)
                     {
                         successfulCount++;
-                        string resultAsBinary = Convert.ToString(result.Item2, 2).PadLeft(14, '0').Insert(4, "'").Insert(6, "'").Insert(8, "'").Insert(13, "'");;
+                        string resultAsBinary = Convert.ToString(result.Item2, 2).PadLeft(14, '0').Insert(4, "'").Insert(6, "'").Insert(8, "'").Insert(13, "'"); ;
                         int a = ((int)result.Item2) & 0xf;
-                        int b = (((int)result.Item2)>>4)&0xf;
+                        int b = (((int)result.Item2) >> 4) & 0xf;
                         var prevColor = console.ForegroundColor;
                         console.ForegroundColor = ConsoleColor.Green;
                         console.Out.WriteLine($"{i + 1}: a={a} b={b}  ; {result.Item2} {resultAsBinary}");
@@ -157,19 +154,39 @@
             {
                 var prevColor = console.ForegroundColor;
                 console.ForegroundColor = ConsoleColor.Green;
-                console.WriteLine($"*** Everything OK. ***");
+                console.WriteLine("*** Everything OK. ***");
                 console.ForegroundColor = prevColor;
             }
         }
 
-        static void Test4BitAdderOracle()
+        static void Test4BitAdderOracle(IConsole console, int a, int b, int expectedResult)
         {
             using (var sim = new QuantumSimulator())
             {
-                int inputValue = 0b0000_0_0001_0011;
-                var task = Quantum._4BitAdderAndGrover.Test4BitAdderOracle.Run(sim, inputValue);
+                //int inputValue = 0b0000_0_0001_0011;
+                var task = Quantum._4BitAdderAndGrover.Test4BitAdderOracle.Run(sim, a, b, expectedResult);
                 var r = task.Result;
-                Console.WriteLine($"(0) -> {r}");
+                console.WriteLine(string.Format("expected result: {0}", expectedResult));
+                console.WriteLine(string.Format("input a:  {0} ({1})", Convert.ToString(a, 2).PadLeft(4, '0'), a));
+                console.WriteLine(string.Format("input b:  {0} ({1})", Convert.ToString(b, 2).PadLeft(4, '0'), b));
+                console.WriteLine(string.Format("output a: {0} ({1})  <- must be same as input", Convert.ToString(r & 0xf, 2).PadLeft(4, '0'), r & 0xf));
+                console.WriteLine(string.Format("output b: {0} ({1})  <- must be same as input", Convert.ToString((r >> 4) & 0xf, 2).PadLeft(4, '0'), (r >> 4) & 0xf));
+                console.WriteLine(string.Format("complete output: {0}'{1}'{2}'{3}'{4}",Convert.ToString((r>>10)&0xf,2).PadLeft(4,'0'), Convert.ToString( (r>>9 )&1, 2).PadLeft(1, '0'), Convert.ToString((r >> 8)&1, 2).PadLeft(1, '0'), Convert.ToString((r >> 4)&0xf, 2).PadLeft(4, '0'), Convert.ToString((r) & 0xf, 2).PadLeft(4, '0')));
+                console.Write(string.Format("flag-Bit: {0}", (r & 0x200) != 0 ? "true" : "false"));
+                if (a+b==expectedResult)
+                {
+                    var prevColor = console.ForegroundColor;
+                    console.ForegroundColor = ConsoleColor.Green;
+                    console.WriteLine(" CORRECT");
+                    console.ForegroundColor = prevColor;
+                }
+                else
+                {
+                    var prevColor = console.ForegroundColor;
+                    console.ForegroundColor = ConsoleColor.Red;
+                    console.WriteLine(" WRONG");
+                    console.ForegroundColor = prevColor;
+                }
             }
         }
     }

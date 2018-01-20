@@ -31,6 +31,8 @@ namespace Quantum._4BitAdderAndGrover
 
         private int expectedResult;
 
+        private int a, b;
+
         private CommandLineApplication cmdLineApp;
 
         public CmdLineArguments(string[] args)
@@ -54,8 +56,15 @@ namespace Quantum._4BitAdderAndGrover
             var groverIterationsOption = this.cmdLineApp.Option("-g| --groveriterations <value>", "How many Grover-iterations to perform (in case of 'FindSummands'-operation)", CommandOptionType.SingleValue);
             repeatsOption.Validators.Add(new MustBePositiveInteger());
             
-            var expectedResultOption = this.cmdLineApp.Option("-e| --expectedresult <value>", "The result for find the summands for (in case of 'FindSummands'-operation)", CommandOptionType.SingleValue);
+            var expectedResultOption = this.cmdLineApp.Option("-e| --expectedresult <value>", "The result for find the summands for (in case of 'FindSummands'- or 'TestAdderOracle'-operation)", CommandOptionType.SingleValue);
             repeatsOption.Validators.Add(new MustBeNonNegativeInteger());
+
+            var summandaOption = this.cmdLineApp.Option("-a| --summand_a <value>", "The first summand (in case of 'TestAdderOracle'-operation)", CommandOptionType.SingleValue);
+            summandaOption.Validators.Add(new MustBeNonNegativeInteger());
+
+            var summandbOption = this.cmdLineApp.Option("-b| --summand_b <value>", "The second summand (in case of 'TestAdderOracle'-operation)", CommandOptionType.SingleValue);
+            summandbOption.Validators.Add(new MustBeNonNegativeInteger());
+
 
             this.cmdLineApp.OnExecute(
                 () =>
@@ -97,6 +106,24 @@ namespace Quantum._4BitAdderAndGrover
                             this.ExpectedResult = int.Parse(expectedResultOption.Value());
                         }
                     }
+
+                    if (this.Operation==OperationToExecute.TestAdderOracle)
+                    {
+                        if (summandaOption.HasValue())
+                        {
+                            this.SummandA = int.Parse(summandaOption.Value());
+                        }
+
+                        if (summandbOption.HasValue())
+                        {
+                            this.SummandB = int.Parse(summandbOption.Value());
+                        }
+
+                        if (expectedResultOption.HasValue())
+                        {
+                            this.ExpectedResult = int.Parse(expectedResultOption.Value());
+                        }
+                    }
                 });
 
             this.cmdLineApp.Execute(args);
@@ -124,6 +151,18 @@ namespace Quantum._4BitAdderAndGrover
         {
             get => this.expectedResult;
             private set => this.expectedResult = value;
+        }
+
+        public int SummandA
+        {
+            get => this.a;
+            private set => this.a = value;
+        }
+
+        public int SummandB
+        {
+            get => this.b;
+            private set => this.b = value;
         }
 
         private class MustBePositiveInteger : IOptionValidator
