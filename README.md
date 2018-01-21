@@ -44,5 +44,9 @@ Here is an example:
     16 = 5 + 11
     *** Everything OK. ***
 
+Of course - this is quite useless. It is mind-blowing that the quantum computer is able to do the computation for all possible inputs **at once** in **one step**, but what's the use if we are only able to get **one** of those results - and we are not even able to control which one. Or... can we?
 
+## Grover's Algorithm
+
+It seems to turn out, that we actually **can control** (to some extent) what we result we get when measuring. That's what [Grover's Search Algorithm](https://en.wikipedia.org/wiki/Grover%27s_algorithm) is about (I found this [paper](https://arxiv.org/abs/quant-ph/9809016v2) very instructive).
 
