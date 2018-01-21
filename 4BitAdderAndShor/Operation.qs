@@ -220,7 +220,7 @@
 				
 				// The second summand was overwritten with the result. We can recover it by running the adjoint operation
 				//  on the result. Note that the qubits are all in pure states since we just have measured them, so this 
-				//  essentially is a classic operation (or: should not be done on qubits but one cbits).
+				//  essentially is a classic operation (or: should not be done on qubits but on cbits).
 				(Adjoint FourBitAdder)(qubits[0],qubits[1],qubits[2],qubits[3],
 										qubits[4],qubits[5],qubits[6],qubits[7],
 										qubits[8],
