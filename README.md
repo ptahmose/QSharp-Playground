@@ -48,5 +48,5 @@ Of course - this is quite useless. It is mind-blowing that the quantum computer 
 
 ## Grover's Algorithm
 
-It seems to turn out, that we actually **can control** (to some extent) what we result we get when measuring. That's what [Grover's Search Algorithm](https://en.wikipedia.org/wiki/Grover%27s_algorithm) is about (I found this [paper](https://arxiv.org/abs/quant-ph/9809016v2) very instructive).
+It seems to turn out, that we actually **can control** (to some extent) which of the results we get when measuring. That's what [Grover's Search Algorithm](https://en.wikipedia.org/wiki/Grover%27s_algorithm) is about (I found this [paper](https://arxiv.org/abs/quant-ph/9809016v2) very instructive).
 
