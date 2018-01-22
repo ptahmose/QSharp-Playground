@@ -40,7 +40,7 @@
 
         static int _4BitAdderGroverTest(IConsole console, CmdLineArguments arguments)
         {
-            console.WriteLine($"Finding the the summands which give the specified sum ({cmdLineArguments.ExpectedResult}), using {cmdLineArguments.GroverIterations} Grover-iterations.");
+            console.WriteLine($"Finding the summands which give the specified sum ({cmdLineArguments.ExpectedResult}), using {cmdLineArguments.GroverIterations} Grover-iterations.");
             console.WriteLine(string.Empty);
 
             int successfulCount = 0;
