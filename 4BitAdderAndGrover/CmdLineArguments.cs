@@ -41,7 +41,7 @@ namespace Quantum._4BitAdderAndGrover
             this.repeats = 1;
             this.groverIterations = 1;
             this.expectedResult = 1;
-            this.cmdLineApp = new CommandLineApplication();
+            this.cmdLineApp = new CommandLineApplication(false);
             this.cmdLineApp.Name = "4BitAdderAndGrover";
             this.cmdLineApp.Description = "A Q#-learning-project, playing with a quantum-4-bit-adder";
             this.cmdLineApp.HelpOption("-?|-h|--help");
@@ -49,13 +49,13 @@ namespace Quantum._4BitAdderAndGrover
             var operationOption = this.cmdLineApp.Option("-o|--operation <value>",
                 "The operation to execute (one of TestAdderInPureState, TestAdderOracle, TestAdderWithEntangledInput, FindSummands)",
                 CommandOptionType.SingleValue);
-            
+
             var repeatsOption = this.cmdLineApp.Option("-r| --repeats <value>", "How many times to repeat the operation", CommandOptionType.SingleValue);
             repeatsOption.Validators.Add(new MustBePositiveInteger());
-            
+
             var groverIterationsOption = this.cmdLineApp.Option("-g| --groveriterations <value>", "How many Grover-iterations to perform (in case of 'FindSummands'-operation)", CommandOptionType.SingleValue);
             repeatsOption.Validators.Add(new MustBePositiveInteger());
-            
+
             var expectedResultOption = this.cmdLineApp.Option("-e| --expectedresult <value>", "The result for find the summands for (in case of 'FindSummands'- or 'TestAdderOracle'-operation)", CommandOptionType.SingleValue);
             repeatsOption.Validators.Add(new MustBeNonNegativeInteger());
 
@@ -76,21 +76,21 @@ namespace Quantum._4BitAdderAndGrover
 
                     if (operationOption.HasValue())
                     {
-                        if (string.Compare("TestAdderInPureState", operationOption.Value(),StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare("TestAdderInPureState", operationOption.Value(), StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.Operation = OperationToExecute.TestAdderInPureState;
                         }
-                        else if (string.Compare("TestAdderOracle", operationOption.Value(),StringComparison.OrdinalIgnoreCase) == 0)
+                        else if (string.Compare("TestAdderOracle", operationOption.Value(), StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.Operation = OperationToExecute.TestAdderOracle;
                         }
-                        else if (string.Compare("TestAdderWithEntangledInput", operationOption.Value(),StringComparison.OrdinalIgnoreCase) == 0)
+                        else if (string.Compare("TestAdderWithEntangledInput", operationOption.Value(), StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.Operation = OperationToExecute.TestAdderWithEntangledInput;
                         }
-                        else if (string.Compare("FindSummands", operationOption.Value(),StringComparison.OrdinalIgnoreCase) == 0)
+                        else if (string.Compare("FindSummands", operationOption.Value(), StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            this.Operation = OperationToExecute.FindSummands;                            
+                            this.Operation = OperationToExecute.FindSummands;
                         }
                     }
 
@@ -107,7 +107,7 @@ namespace Quantum._4BitAdderAndGrover
                         }
                     }
 
-                    if (this.Operation==OperationToExecute.TestAdderOracle)
+                    if (this.Operation == OperationToExecute.TestAdderOracle)
                     {
                         if (summandaOption.HasValue())
                         {
@@ -127,6 +127,35 @@ namespace Quantum._4BitAdderAndGrover
                 });
 
             this.cmdLineApp.Execute(args);
+            if (this.cmdLineApp.RemainingArguments != null && this.cmdLineApp.RemainingArguments.Count > 0)
+            {
+                Console.WriteLine("Error parsing commandline.");
+                Console.WriteLine();
+                this.operationToExecute = OperationToExecute.Invalid;
+            }
+
+            if (!this.AreArgumentsValid)
+            {
+                this.cmdLineApp.ShowHint();
+            }
+        }
+
+        public void ShowHelp()
+        {
+            this.cmdLineApp.ShowHelp();
+        }
+
+        public bool AreArgumentsValid
+        {
+            get
+            {
+                if (this.Operation == OperationToExecute.Invalid)
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         public OperationToExecute Operation
@@ -140,13 +169,13 @@ namespace Quantum._4BitAdderAndGrover
             get => this.repeats;
             private set { this.repeats = value; }
         }
-        
+
         public int GroverIterations
         {
             get => this.groverIterations;
             private set => this.groverIterations = value;
         }
-        
+
         public int ExpectedResult
         {
             get => this.expectedResult;
@@ -188,7 +217,7 @@ namespace Quantum._4BitAdderAndGrover
                 return ValidationResult.Success;
             }
         }
-        
+
         private class MustBeNonNegativeInteger : IOptionValidator
         {
             public ValidationResult GetValidationResult(CommandOption option, ValidationContext context)

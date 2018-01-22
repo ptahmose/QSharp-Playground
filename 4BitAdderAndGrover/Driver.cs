@@ -15,6 +15,12 @@
         static void Main(string[] args)
         {
             cmdLineArguments = new CmdLineArguments(args);
+
+            if (!cmdLineArguments.AreArgumentsValid)
+            {
+                return;
+            }
+
             switch (cmdLineArguments.Operation)
             {
                 case CmdLineArguments.OperationToExecute.TestAdderInPureState:
