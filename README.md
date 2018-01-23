@@ -52,7 +52,7 @@ It seems to turn out, that we actually **can control** (to some extent) which of
 The ingredient to Grover's algorithm is an *oracle function* which has the task of
 * bring the input/output qubits in superposition
 * determine whether the input qubits give the result we are looking for
-* if so, set a flag qubit to |1>
+* if so, set the flag-qubit to |1>
 
 This allows us to specify a result, and then determine the input which gives the result. So, we can solve the question "for which input do I get this result?".
 
@@ -60,10 +60,22 @@ We need to repeat Grover's algorithm Pi/4*Sqrt(2^n/k) times in order to get maxi
 
 This example determines which summands give a sum of 29 (and repeat this calculation 3 times):
 
-    > .\4BitAdderAndGrover.exe  --operation  FindSummands -e 29 -g 9 -r 3
-    Finding the the summands which give the specified sum (29), using 9 Grover-iterations.
+    > .\4BitAdderAndGrover.exe --operation FindSummands -e 29 -g 9 -r 3
+    Finding the summands which give the specified sum (29), using 9 Grover-iterations.
     
     1: a=15 b=14  ; 751 0000'1'0'1110'1111
     2: a=15 b=14  ; 751 0000'1'0'1110'1111
     3: a=14 b=15  ; 766 0000'1'0'1111'1110
     Grover-Iterations 9: 3 of 3 had the desired result.
+
+We had to iterate 9 times because Pi/4*Sqrt(2^8/2) is approximately 9 (and there are two possible sets of summands). If we use an inappropriate number of iterations, we are more likely to measure a "bad state":
+
+    > .\4BitAdderAndGrover.exe --operation FindSummands -e 29 -g 3 -r 5
+    Finding the summands which give the specified sum (29), using 3 Grover-iterations.
+    
+    1: a=15 b=14  ; 751 0000'1'0'1110'1111
+    2: not successful
+    3: a=14 b=15  ; 766 0000'1'0'1111'1110
+    4: a=15 b=14  ; 751 0000'1'0'1110'1111
+    5: not successful
+    Grover-Iterations 3: 3 of 5 had the desired result.
