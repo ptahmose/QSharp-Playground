@@ -11,7 +11,7 @@ You will find in this repository:
 
 ## 4-qubit adder
 
-The implementation of the 4-bit follows the approach detailed [here](https://arxiv.org/ftp/quant-ph/papers/0206/0206028.pdf). This *Conventional Quantum Plain Adder* takes two 4-qubit inputs and produces a 5-qubit output. In addition, we need to have 4 ancillary qubits.
+The implementation of the 4-bit adder follows the approach detailed [here](https://arxiv.org/ftp/quant-ph/papers/0206/0206028.pdf). This *Conventional Quantum Plain Adder* takes two 4-qubit inputs and produces a 5-qubit output. In addition, we need to have 4 ancillary qubits.
 
 The prototype of the adder is:
 
