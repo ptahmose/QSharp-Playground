@@ -41,7 +41,7 @@ namespace Quantum._4BitAdderAndGrover
             this.repeats = 1;
             this.groverIterations = 1;
             this.expectedResult = 1;
-            this.cmdLineApp = new CommandLineApplication(false);
+            this.cmdLineApp = new CommandLineApplication();
             this.cmdLineApp.Name = "4BitAdderAndGrover";
             this.cmdLineApp.Description = "A Q#-learning-project, playing with a quantum-4-bit-adder";
             this.cmdLineApp.HelpOption("-?|-h|--help");

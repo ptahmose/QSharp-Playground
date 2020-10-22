@@ -1,8 +1,14 @@
 ﻿namespace Quantum._4BitAdderAndGrover
 {
-    open Microsoft.Quantum.Primitive;
+   open Microsoft.Quantum.Canon;
+	 open Microsoft.Quantum.Extensions.Bitwise ;
+	    open Microsoft.Quantum.Arrays;
+    open Microsoft.Quantum.Convert;
+    open Microsoft.Quantum.Measurement;
+    open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
-	open Microsoft.Quantum.Extensions.Bitwise ;
+    open Microsoft.Quantum.Oracles;
+    open Microsoft.Quantum.AmplitudeAmplification;
 
 
 	operation AdderCarry(carryIn:Qubit, a:Qubit,b:Qubit,carryOut:Qubit):()
@@ -14,9 +20,9 @@
 			CCNOT(carryIn,b,carryOut);
 		}
 
-		adjoint auto
-		controlled auto
-        adjoint controlled auto
+		adjoint auto;
+		controlled auto;
+        adjoint controlled auto;
 	}
 
 	operation Sum(carry:Qubit,a: Qubit, b:Qubit) : ()
@@ -27,9 +33,9 @@
 			CNOT(carry,b);
 		}
 
-		adjoint auto
-		controlled auto
-        adjoint controlled auto
+		adjoint auto;
+		controlled auto;
+        adjoint controlled auto;
 	}
 
 
@@ -57,9 +63,9 @@
 			Sum(tempQubits[0],a1,b1);
 		}
 
-		adjoint auto
-		controlled auto
-        adjoint controlled auto
+		adjoint auto;
+		controlled auto;
+        adjoint controlled auto;
 	}
 	
 	operation FourBitAdderOracle(execHadamard:Bool,expectedSum : Int, idxMarkedQubit: Int, qubits: Qubit[], tmpQubitIndices:Int[]):()
@@ -75,14 +81,16 @@
 			// "dataRegister" contains the qubits we care about, or those are the input-qubits for the oracle. Note that
 			//  we also exclude the "carry"-qubit (the 5th qubit of the result) because it is not used as a input, it must
 			//  be |0>.
-			let dataRegister = Exclude([idxMarkedQubit;tmpQubitIndices[0];tmpQubitIndices[1];tmpQubitIndices[2];tmpQubitIndices[3];8], qubits);
+			let dataRegister = Exclude([idxMarkedQubit,tmpQubitIndices[0],tmpQubitIndices[1],tmpQubitIndices[2],tmpQubitIndices[3],8], qubits);
+			//let array = [10, 11, 12, 13, 14, 15];
+			//let dataRegister = Exclude([1,2,3],array);
 			
 			if (execHadamard)
 			{
 				ApplyToEachCA(H, dataRegister);
 			}
 
-			let tmpQubits=[qubits[tmpQubitIndices[0]];qubits[tmpQubitIndices[1]];qubits[tmpQubitIndices[2]];qubits[tmpQubitIndices[3]]];
+			let tmpQubits=[qubits[tmpQubitIndices[0]],qubits[tmpQubitIndices[1]],qubits[tmpQubitIndices[2]],qubits[tmpQubitIndices[3]]];
 
 			FourBitAdder(qubits[0],qubits[1],qubits[2],qubits[3],
 						 qubits[4],qubits[5],qubits[6],qubits[7],qubits[8],tmpQubits);
@@ -98,7 +106,7 @@
 			// we "and" the result-qubits (which have been inverted in case we expect a zero), so the flag-qubit
 			//  is only set if the result is the same as "expectedSum"
 			MultiControlledXClean(
-				[qubits[4];qubits[5];qubits[6];qubits[7];qubits[8]],
+				[qubits[4],qubits[5],qubits[6],qubits[7],qubits[8]],
 				flagQubit);
 			
 			if (And(expectedSum,1)==0)	{X(qubits[4]);}
@@ -111,9 +119,9 @@
 						            qubits[4],qubits[5],qubits[6],qubits[7],qubits[8],tmpQubits);
 		}
 
-		adjoint auto
-		controlled auto
-        adjoint controlled auto
+		adjoint auto;
+		controlled auto;
+        adjoint controlled auto;
 	}
 
 	function GroverStatePrepOracle(expectedSum : Int,tmpQuBitIndices:Int[]) : StateOracle
@@ -140,7 +148,7 @@
              // oracle-function) and additional 4 ancillary qubits (required by the 4-bit-adder).
             using (qubits = Qubit[10+4]) 
 			{
-				(GroverSearch( expectedSum, nIterations, 9, [10;11;12;13]))(qubits);
+				(GroverSearch( expectedSum, nIterations, 9, [10,11,12,13]))(qubits);
 
 				 // Measure the marked qubit. On success, this should be One.
                 set resultSuccess = M(qubits[9]);
@@ -148,7 +156,7 @@
 				// Measure the state of the database register post-selected on
                 // the state of the marked qubit.
                 let resultElement = MultiM(qubits);
-				set resultValue = PositiveIntFromResultArr(resultElement);
+				set resultValue = ResultArrayAsInt(resultElement);
 
 				// This resets all qubits to the |0〉 state, which is required 
                 // before deallocation.
@@ -172,17 +180,17 @@
 			mutable result=0;
 			using (qubits = Qubit[9+4])
 			{
-				let tempQubits=[qubits[9];qubits[10];qubits[11];qubits[12]];
+				let tempQubits=[qubits[9],qubits[10],qubits[11],qubits[12]];
 				
-				SetFromIntegerBits(a, [0;1;2;3], qubits);
-				SetFromIntegerBits(b, [4;5;6;7], qubits);
+				SetFromIntegerBits(a, [0,1,2,3], qubits);
+				SetFromIntegerBits(b, [4,5,6,7], qubits);
 				
 				FourBitAdder(qubits[0],qubits[1],qubits[2],qubits[3],
 								qubits[4],qubits[5],qubits[6],qubits[7],
 								qubits[8],
 								tempQubits);
 								
-                set result = PositiveIntFromResultArr(MultiM([qubits[4];qubits[5];qubits[6];qubits[7];qubits[8]]));									
+                set result = ResultArrayAsInt(MultiM([qubits[4],qubits[5],qubits[6],qubits[7],qubits[8]]));									
 
 				ResetAll(qubits);
 			}
@@ -205,7 +213,7 @@
 			mutable summand2=0;
 			using (qubits = Qubit[9+4])
 			{
-				let tempQubits=[qubits[9];qubits[10];qubits[11];qubits[12]];
+				let tempQubits=[qubits[9],qubits[10],qubits[11],qubits[12]];
 
 				H(qubits[0]);H(qubits[1]);H(qubits[2]);H(qubits[3]);
 				H(qubits[4]);H(qubits[5]);H(qubits[6]);H(qubits[7]);
@@ -215,8 +223,8 @@
 								qubits[8],
 								tempQubits);
 
-				set sum = PositiveIntFromResultArr(MultiM([qubits[4];qubits[5];qubits[6];qubits[7];qubits[8]]));
-				set summand1 = PositiveIntFromResultArr(MultiM([qubits[0];qubits[1];qubits[2];qubits[3]]));
+				set sum = ResultArrayAsInt (MultiM([qubits[4],qubits[5],qubits[6],qubits[7],qubits[8]]));
+				set summand1 = ResultArrayAsInt (MultiM([qubits[0],qubits[1],qubits[2],qubits[3]]));
 				
 				// The second summand was overwritten with the result. We can recover it by running the adjoint operation
 				//  on the result. Note that the qubits are all in pure states since we just have measured them, so this 
@@ -226,7 +234,7 @@
 										qubits[8],
 										tempQubits);
 										
-                set summand2 = PositiveIntFromResultArr(MultiM([qubits[4];qubits[5];qubits[6];qubits[7]]));															
+                set summand2 = ResultArrayAsInt (MultiM([qubits[4],qubits[5],qubits[6],qubits[7]]));															
 
 				ResetAll(qubits);
 			}
@@ -244,12 +252,12 @@
 			// qubit 9 is marker bit, qbuit 10-13 are ancillary quits, qubit 8 is carry bit which must be zero on input
 			using (qubits = Qubit[14]) 
 			{
-				SetFromIntegerBits(a, [0;1;2;3], qubits);
-				SetFromIntegerBits(b, [4;5;6;7], qubits);
+				SetFromIntegerBits(a, [0,1,2,3], qubits);
+				SetFromIntegerBits(b, [4,5,6,7], qubits);
 
-				FourBitAdderOracle(false,expectedSum,9,qubits,[10;11;12;13]);
+				FourBitAdderOracle(false,expectedSum,9,qubits,[10,11,12,13]);
 
-				set result= PositiveIntFromResultArr(MultiM(qubits));
+				set result= ResultArrayAsInt(MultiM(qubits));
 
 				ResetAll(qubits);
 			}
@@ -274,14 +282,14 @@
                 let multiNot = 
                     ApplyMultiControlledCA(
                         ApplyToFirstThreeQubitsCA(CCNOT, _), CCNOTop(CCNOT), _, _ );
-                multiNot(Rest(controls),[Head(controls);target]);
+                multiNot(Rest(controls),[Head(controls),target]);
             }
         }
-        adjoint auto 
+        adjoint auto; 
         controlled( extraControls ) {
             MultiControlledXClean( extraControls + controls, target );
         }
-        controlled adjoint auto
+        controlled adjoint auto;
     }
 	
 	operation SetFromIntegerBits(v: Int, indices: Int[],qubits:Qubit[]):()

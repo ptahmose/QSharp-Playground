@@ -1,6 +1,6 @@
 ﻿namespace Quantum.QSharpApplication1
 {
-    open Microsoft.Quantum.Primitive;
+    open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
 
     operation Set (desired: Result, q1: Qubit) : ()

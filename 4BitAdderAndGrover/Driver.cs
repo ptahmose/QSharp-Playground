@@ -177,9 +177,9 @@
                 console.WriteLine(string.Format("input b:  {0} ({1})", Convert.ToString(b, 2).PadLeft(4, '0'), b));
                 console.WriteLine(string.Format("output a: {0} ({1})  <- must be same as input", Convert.ToString(r & 0xf, 2).PadLeft(4, '0'), r & 0xf));
                 console.WriteLine(string.Format("output b: {0} ({1})  <- must be same as input", Convert.ToString((r >> 4) & 0xf, 2).PadLeft(4, '0'), (r >> 4) & 0xf));
-                console.WriteLine(string.Format("complete output: {0}'{1}'{2}'{3}'{4}",Convert.ToString((r>>10)&0xf,2).PadLeft(4,'0'), Convert.ToString( (r>>9 )&1, 2).PadLeft(1, '0'), Convert.ToString((r >> 8)&1, 2).PadLeft(1, '0'), Convert.ToString((r >> 4)&0xf, 2).PadLeft(4, '0'), Convert.ToString((r) & 0xf, 2).PadLeft(4, '0')));
+                console.WriteLine(string.Format("complete output: {0}'{1}'{2}'{3}'{4}", Convert.ToString((r >> 10) & 0xf, 2).PadLeft(4, '0'), Convert.ToString((r >> 9) & 1, 2).PadLeft(1, '0'), Convert.ToString((r >> 8) & 1, 2).PadLeft(1, '0'), Convert.ToString((r >> 4) & 0xf, 2).PadLeft(4, '0'), Convert.ToString((r) & 0xf, 2).PadLeft(4, '0')));
                 console.Write(string.Format("flag-Bit: {0}", (r & 0x200) != 0 ? "true" : "false"));
-                if (a+b==expectedResult)
+                if (a + b == expectedResult)
                 {
                     var prevColor = console.ForegroundColor;
                     console.ForegroundColor = ConsoleColor.Green;
