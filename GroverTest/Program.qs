@@ -1,7 +1,12 @@
 ﻿namespace Quantum.GroverTest
 {
-    open Microsoft.Quantum.Primitive;
+    open Microsoft.Quantum.Arrays;
+    open Microsoft.Quantum.Convert;
+    open Microsoft.Quantum.Measurement;
+    open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
+    open Microsoft.Quantum.Oracles;
+    open Microsoft.Quantum.AmplitudeAmplification;
 
     //////////////////////////////////////////////////////////////////////////
     // Database Search with the Canon ////////////////////////////////////////
@@ -60,9 +65,9 @@
             }
 
         }	
-        adjoint auto
-        controlled auto
-        adjoint controlled auto
+        adjoint auto;
+        controlled auto;
+        adjoint controlled auto;
     }
 
     // The `StateOracle` described above is now constructed from partial 
@@ -101,9 +106,9 @@
 
         }
 
-        adjoint auto
-        controlled auto
-        adjoint controlled auto
+        adjoint auto;
+        controlled auto;
+        adjoint controlled auto;
     }
 
     /// # Summary
@@ -145,7 +150,7 @@
     /// Sin((2*nIterations + 1) ArcSin(Sqrt(M/N))).
     function GroverSearch( markedElements: Int[], nIterations: Int, idxMarkedQubit: Int) : (Qubit[] => () : Adjoint, Controlled)
     {
-        return AmpAmpByOracle(nIterations, GroverStatePrepOracle(markedElements), idxMarkedQubit);
+        return StandardAmplitudeAmplification(nIterations, GroverStatePrepOracle(markedElements), idxMarkedQubit);
     }
     
     // Let us now allocate qubits and run GroverSearch.
@@ -191,7 +196,8 @@
                 // the state of the marked qubit.
                 let resultElement = MultiM(databaseRegister);
 
-                set numberElement = PositiveIntFromResultArr(resultElement);
+                //set numberElement = PositiveIntFromResultArr(resultElement);
+                set numberElement = ResultArrayAsInt(resultElement);
 
                 // These reset all qubits to the |0〉 state, which is required 
                 // before deallocation.

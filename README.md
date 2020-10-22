@@ -56,7 +56,7 @@ The ingredient to Grover's algorithm is an *oracle function* which has the task 
 
 This allows us to specify a result, and then determine the input which gives the result. So, we can solve the question "for which input do I get this result?".
 
-We need to repeat Grover's algorithm Pi/4*Sqrt(2^n/k) times in order to get maximum likelihood of measuring the desired result (where the flag-qubit is |1>) - where n is the number of input qubits and k is the multiplicity of "good inputs". The latter is unknown in general - which then goes beyond the basic application of Grover.
+We need to repeat Grover's algorithm <img src="https://render.githubusercontent.com/render/math?math=\frac{\pi}{4}\cdot\sqrt{\frac{2^n}{k}}"> times in order to get maximum likelihood of measuring the desired result (where the flag-qubit is |1>) - where n is the number of input qubits and k is the multiplicity of "good inputs". The latter is unknown in general - which then goes beyond the basic application of Grover.
 
 This example determines which summands give a sum of 29 (and repeat this calculation 3 times):
 
@@ -68,7 +68,7 @@ This example determines which summands give a sum of 29 (and repeat this calcula
     3: a=14 b=15  ; 766 0000'1'0'1111'1110
     Grover-Iterations 9: 3 of 3 had the desired result.
 
-We had to iterate 9 times because Pi/4*Sqrt(2^8/2) is approximately 9 (and there are two possible sets of summands). If we use an inappropriate number of iterations, we are more likely to measure a "bad state":
+We had to iterate 9 times because <img src="https://render.githubusercontent.com/render/math?math=\frac{\pi}{4}\cdot\sqrt{\frac{2^8}{2}}"> is approximately 9 (and there are two possible sets of summands). If we use an inappropriate number of iterations, we are more likely to measure a "bad state":
 
     > .\4BitAdderAndGrover.exe --operation FindSummands -e 29 -g 3 -r 5
     Finding the summands which give the specified sum (29), using 3 Grover-iterations.
