@@ -1,5 +1,6 @@
 ﻿namespace Quantum.QSharpApplication1
 {
+    open Microsoft.Quantum.Diagnostics;
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
 
@@ -95,8 +96,11 @@
                     Set(initial, qubits[0]);
 					          Set(Zero, qubits[1]);
 
+                    //DumpMachine();
 					          H(qubits[0]);
+                    //DumpMachine();
 					          CNOT(qubits[0], qubits[1]);	// if [0] is |1> then flip [1]
+                    //DumpMachine();
 
                     let res1 = M (qubits[0]);
 					          let res2 = M (qubits[1]);
