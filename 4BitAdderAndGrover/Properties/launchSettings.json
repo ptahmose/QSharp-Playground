@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "4BitAdderAndGrover": {
+      "commandName": "Project",
+      "commandLineArgs": "--operation FindSummands -e 29 -g 9 -r 3"
+    }
+  }
+}
