@@ -68,7 +68,7 @@ This example determines which summands give a sum of 29 (and repeat this calcula
     3: a=14 b=15  ; 766 0000'1'0'1111'1110
     Grover-Iterations 9: 3 of 3 had the desired result.
 
-We had to iterate 9 times because Pi/4*Sqrt(2^8/2) is approximately 9 (and there are two possible sets of summands). If we use an inappropriate number of iterations, we are more likely to measure a "bad state":
+We had to iterate 9 times because <img src="https://render.githubusercontent.com/render/math?math=\frac{\pi}{4}\cdot\sqrt{\frac{2^8}{2}}"> is approximately 9 (and there are two possible sets of summands). If we use an inappropriate number of iterations, we are more likely to measure a "bad state":
 
     > .\4BitAdderAndGrover.exe --operation FindSummands -e 29 -g 3 -r 5
     Finding the summands which give the specified sum (29), using 3 Grover-iterations.
