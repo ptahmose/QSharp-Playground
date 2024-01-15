@@ -56,7 +56,7 @@ The ingredient to Grover's algorithm is an *oracle function* which has the task 
 
 This allows us to specify a result, and then determine the input which gives the result. So, we can solve the question "for which input do I get this result?".
 
-We need to repeat Grover's algorithm <img src="https://render.githubusercontent.com/render/math?math=\frac{\pi}{4}\cdot\sqrt{\frac{2^n}{k}}"> times in order to get maximum likelihood of measuring the desired result (where the flag-qubit is |1>) - where n is the number of input qubits and k is the multiplicity of "good inputs". The latter is unknown in general - which then goes beyond the basic application of Grover.
+We need to repeat Grover's algorithm $\frac{\pi}{4}\cdot\sqrt{\frac{2^n}{k}}$ times in order to get maximum likelihood of measuring the desired result (where the flag-qubit is |1>) - where n is the number of input qubits and k is the multiplicity of "good inputs". The latter is unknown in general - which then goes beyond the basic application of Grover.
 
 This example determines which summands give a sum of 29 (and repeat this calculation 3 times):
 
